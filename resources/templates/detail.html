@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>商品詳細</title>
+<link href="../css/commons.css" rel="stylesheet">
+</head>
+<body>
+  <th:block th:insert="common/header"></th:block>
+
+  <div class="update">
+    <div class="form-body">
+      <div class="img_block">
+        <img src="images/マッキー.png" class="product-img"><br>
+      </div>
+      <form th:action="@{/detail/{id}(id=${id})}" method="post" th:object="${form}">
+        <fieldset class="label-130 product_block">
+          <p class="error">[[ ${errorMsg} ]]</p>
+          <div>
+            <label>商品ID</label>
+            <input type="text" th:field="*{productId}" readonly class="base-text">
+          </div>
+          <div>
+            <label>商品名</label>
+            <input type="text" th:field="*{name}" readonly class="base-text">
+          </div>
+          <div>
+            <label>単価</label>
+            <input type="text" th:field="*{price}" readonly class="base-text">
+          </div>
+          <div>
+            <label>カテゴリ</label>
+            <input type="text" th:field="*{category}" readonly class="base-text">
+          </div>
+          <div>
+            <label>商品説明</label>
+            <textarea th:field="*{description}" readonly class="base-text" style="background-color: rgb(209, 209, 209);"></textarea>
+          </div>
+        </fieldset>
+        <div>
+          <div class="btns">
+            <input th:if="${session.user.role == 1}" type="button" onclick="openModal()" value="削除" class="basic-btn">
+            <input th:if="${session.user.role == 1}" type="button" th:onclick="|location.href='../updateInput/__${id}__'|" name="update" value="編集" class="basic-btn">
+            <input type="button" onclick="location.href='../menu'" value="戻る" class="cancel-btn">
+          </div>
+          <div id="modal">
+            <p class="modal-message">削除しますか？</p>
+            <div class="btns">
+              <button type="submit" name="delete" id="delete-btn" class="basic-btn">削除</button>
+              <button type="button" onclick="closeModal()" class="cancel-btn">キャンセル</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="fadeLayer"></div>
+  <script src="../js/commons.js"></script>
+</body>
+</html>

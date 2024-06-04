@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>更新</title>
+<link href="../css/commons.css" rel="stylesheet">
+</head>
+<body>
+  <th:block th:insert="common/header"></th:block>
+
+  <div class="insert">
+    <div class="form-body">
+      <p class="error">[[ ${errorMsg} ]]</p>
+
+      <form th:action="@{/updateInput/{id}(id=${id})}" method="post" th:object="${form}">
+        <fieldset class="label-130">
+          <div>
+            <label>商品ID</label>
+            <input type="text" th:field="*{productId}" class="base-text">
+            <span class="error" th:each="error: ${#fields.errors('productId')}">
+              [[ ${error} ]]
+            </span>
+          </div>
+          <div>
+            <label>商品名</label>
+            <input type="text" class="base-text" th:field="*{name}">
+            <span class="error" th:each="error: ${#fields.errors('name')}">
+              [[ ${error} ]]
+            </span>
+          </div>
+          <div>
+            <label>単価</label>
+            <input type="number" class="base-text" th:field="*{price}">
+            <span class="error" th:each="error: ${#fields.errors('price')}">
+              [[ ${error} ]]
+            </span>
+          </div>
+          <div>
+            <label>カテゴリ</label>
+            <select class="base-text" th:field="*{category}">
+              <option th:each="category : ${categories}" th:value="${category.name}" >
+                [[ ${category.name} ]]
+              </option>
+            </select>
+          </div>
+          <div>
+            <label>商品説明</label>
+            <textarea class="base-text" th:field="*{description}"></textarea>
+          </div>
+          <div>
+            <label>画像</label>
+            <input type="file" name="file">
+            <span class="error" th:each="error: ${#fields.errors('file')}">
+              [[ ${error} ]]
+            </span>
+          </div>
+        </fieldset>
+          <div class="btns">
+            <button type="button" onclick="openModal()" class="basic-btn">更新</button>
+            <input type="button" onclick="location.href='../menu'" value="メニューに戻る" class="cancel-btn">
+          </div>
+          <div id="modal">
+            <p class="modal-message">更新しますか？</p>
+            <div class="btns">
+              <button type="submit" id="update-btn" class="basic-btn">更新</button>
+              <button type="button" onclick="closeModal()" class="cancel-btn">キャンセル</button>
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+  <div id="fadeLayer"></div>
+  <script src="../js/commons.js"></script>
+</body>
+</html>

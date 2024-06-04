@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>ログイン</title>
+<link href="/css/commons.css" rel="stylesheet">
+</head>
+<body class="login-body">
+  <div class="header">
+    <h1 class="site_logo">商品管理システム</h1>
+  </div>
+
+  <div class="login-form">
+    <img src="/img/logo.png" class="login-logo">
+    <p class="error">[[ ${errorMsg} ]]</p>
+
+    <form action="index" method="post" th:object="${loginForm}">
+      <fieldset>
+        <div class="cp_iptxt">
+          <input class="base-input" type="text" th:field="*{loginId}" placeholder="ID">
+          <div class="error" th:each="error: ${#fields.errors('loginId')}">
+            [[ ${error} ]]
+          </div>
+        </div>
+
+        <div>
+          <input class="base-input" type="password" th:field="*{password}" placeholder="PASS">
+          <div class="error" th:each="error: ${#fields.errors('password')}">
+            [[ ${error} ]]
+          </div>
+        </div>
+      </fieldset>
+      <button id="login-btn" class="custom-btn" type="submit">
+          ログイン
+      </button>
+    </form>
+  </div>
+<!--  <script>-->
+<!--    'use strict'-->
+<!--    document.getElementById('login-btn').addEventListener('click', () => {-->
+<!--      location.href = './index'-->
+<!--    })-->
+<!--  </script>-->
+</body>
+</html>

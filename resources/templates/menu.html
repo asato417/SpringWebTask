@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>メニュー</title>
+<link href="/css/commons.css" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <th:block th:insert="common/header"></th:block>
+    <div class="btn-area" th:if="${session.user.role == 1}">
+      <div class="btn"><a class="basic-btn regist" href="/insert">新規登録</a></div>
+      <div class="btn"><a class="basic-btn regist" href="category">カテゴリ管理</a></div>
+    </div>
+    <p>[[ ${successMsg} ]]</p>
+    <form method="get" action="menu" class="search-form">
+      <div class="search-container">
+        <input type="text" name="keyword" size="25" placeholder="キーワード検索">
+        <input type="submit" value="&#xf002">
+      </div>
+    </form>
+    <table>
+        <div class="caption"><p>検索結果：[[ ${recordNum} ]]件</p></div>
+        
+      <thead>
+        <tr>
+          <th>商品ID</th>
+          <th>商品名</th>
+          <th>単価</th>
+          <th>カテゴリ</th>
+          <th>詳細</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.productId}"></td>
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${categories.get(__${product.categoryId}__ - 1).name}"></td>
+            <td><a class="detail_btn" th:href="@{/detail/{id}(id=${product.id})}">詳細</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>商品登録</title>
+<link href="css/commons.css" rel="stylesheet">
+</head>
+<body>
+  <th:block th:insert="common/header"></th:block>
+  
+  <div class="insert">
+    <div class="discription">
+      <p>
+        登録情報を入力してください（<span class="required"></span>は必須です）
+      </p>
+    </div>
+  
+    <div class="form-body">
+      <p class="error">[[ ${errorMsg} ]]</p>
+  
+      <form action="insert" method="post" th:object="${insertForm}">
+        <fieldset class="label-130">
+          <div>
+            <label class="required">商品ID</label>
+            <input type="text" class="base-text" th:field="*{productId}">
+            <span class="error" th:each="error: ${#fields.errors('productId')}">
+              [[ ${error} ]]
+            </span>
+          </div>
+          <div>
+            <label class="required">商品名</label>
+            <input type="text" class="base-text" th:field="*{name}">
+            <span class="error" th:each="error: ${#fields.errors('name')}">
+              [[ ${error} ]]
+            </span>
+          </div>
+          <div>
+            <label class="required">単価</label>
+            <input type="number" class="base-text" th:field="*{price}">
+            <span class="error" th:each="error: ${#fields.errors('price')}">
+              [[ ${error} ]]
+            </span>
+          </div>
+          <div class="select_block">
+            <label class="required">カテゴリ</label>
+<!--            <select class="base-text" th:field="*{categoryId}">-->
+<!--              <option th:value="1">筆記具</option>-->
+<!--              <option value="2">紙製品</option>-->
+<!--              <option value="3">事務消耗品</option>-->
+<!--              <option value="4">オフィス機器</option>-->
+<!--              <option value="5">雑貨</option>-->
+<!--            </select>-->
+            <select class="base-text" th:field="*{category}">
+              <option th:each="category : ${categories}" th:value="${category.id}">[[ ${category.name} ]]</option>
+            </select>
+          </div>
+          <div>
+            <label>商品説明</label>
+            <textarea class="base-text" th:field="*{description}"></textarea>
+          </div>
+          <div>
+            <label>画像</label>
+            <input type="file" th:field="*{file}">
+            <span class="error" th:each="error: ${#fields.errors('file')}">
+              [[ ${error} ]]
+            </span>
+          </div>
+        </fieldset>
+        <div class="btns">
+          <button type="button" onclick="openModal()" class="basic-btn">登録</button>
+          <input type="button" onclick="location.href='menu'" value="戻る" class="cancel-btn">
+        </div>
+        <div id="modal">
+          <p class="modal-message">登録しますか？</p>
+          <div class="btns">
+            <button type="submit" id="register-btn" class="basic-btn">登録</button>
+            <button type="button" onclick="closeModal()" class="cancel-btn">キャンセル</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="fadeLayer"></div>
+  <script src="./js/commons.js"></script>
+<!--  <script>-->
+<!--    'use strict'-->
+<!--    document.getElementById('register-btn').addEventListener('click', () => {-->
+<!--      location.href = './menu.html'-->
+<!--    })-->
+<!--  </script>-->
+</body>
+</html>
