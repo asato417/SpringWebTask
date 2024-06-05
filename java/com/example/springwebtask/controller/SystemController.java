@@ -17,6 +17,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Controller
 public class SystemController {
     @Autowired
@@ -53,17 +57,19 @@ public class SystemController {
     }
     @GetMapping("/menu")
     public String menu(@RequestParam(name="keyword", defaultValue="all") String key,
+                       @RequestParam(name="order", defaultValue = "product_id,ASC") String order,
                        @ModelAttribute("successMsg") String successMsg, Model model){
         if(request.getSession(false)==null) return "redirect:/index";
         var recordNum = 0;
         if(key.equals("all")) {
-            var productAll = productService.findAll();
+            var productAll = productService.findAllSort(order.split(",")[0], order.split(",")[1]);
             var categoryAll = categoryService.findAll();
             model.addAttribute("products", productAll);
             model.addAttribute("categories", categoryAll);
             recordNum = productAll.size();
         } else {
-            var products = productService.findByName(key);
+            var keys = Arrays.asList(key.replaceAll(" |　", " ").split(" "));
+            var products = productService.findByNameSort(keys,order.split(",")[0], order.split(",")[1]);
             if (products != null) {
                 var categoryAll = categoryService.findAll();
                 model.addAttribute("products", products);
@@ -166,7 +172,7 @@ public class SystemController {
         // 重複する商品IDがあるか調べる
         var record = productService.findById(id);
         var compRecord = productService.findByProductId(updForm.getProductId());
-        if(compRecord == null || record.productId().equals(compRecord.productId())) {
+        if(compRecord == null || record.productId().equals(updForm.getProductId())) {
             var updateProduct = new ProductRecord(record.id(), updForm.getProductId(),
                     categoryService.findByName(updForm.getCategory()).id(),
                     updForm.getName(), updForm.getPrice(), null,

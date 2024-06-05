@@ -18,8 +18,18 @@ public class ProductService implements IProductService{
     }
 
     @Override
+    public List<ProductRecord> findAllSort(String columnName, String order) {
+        return productRepository.findAllSort(columnName, order);
+    }
+
+    @Override
     public List<ProductRecord> findByName(String name) {
         return productRepository.findByName(name);
+    }
+
+    @Override
+    public List<ProductRecord> findByNameSort(List<String> name, String columnName, String order) {
+        return productRepository.findByNameSort(name, columnName, order);
     }
 
     @Override

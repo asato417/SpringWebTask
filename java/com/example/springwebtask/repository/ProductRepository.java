@@ -21,12 +21,34 @@ public class ProductRepository implements IProductRepository{
     }
 
     @Override
+    public List<ProductRecord> findAllSort(String columnName, String order) {
+        var param = new MapSqlParameterSource();
+        param.addValue("columnName", "category_id");
+        var sql = "SELECT * FROM products ORDER BY " + columnName  + " " + order;
+        return jdbcTemplate.query(sql, new DataClassRowMapper<>(ProductRecord.class));
+    }
+
+    @Override
     public List<ProductRecord> findByName(String name) {
         var param = new MapSqlParameterSource();
         name = "%" + name + "%";
         param.addValue("name", name);
-        final String FIND_PRODUCT_SQL = "SELECT * FROM products WHERE name LIKE :name";
+        final String FIND_PRODUCT_SQL = "SELECT * FROM products WHERE name LIKE :name OR category_id IN (SELECT id FROM categories WHERE name LIKE :name )";
         var resultList = jdbcTemplate.query(FIND_PRODUCT_SQL, param,
+                new DataClassRowMapper<>(ProductRecord.class));
+        return resultList.isEmpty() ? null : resultList;
+    }
+
+    @Override
+    public List<ProductRecord> findByNameSort(List<String> keys, String columnName, String order) {
+//        var param = new MapSqlParameterSource();
+//        final String FIND_PRODUCT_SQL = "SELECT * FROM products WHERE name LIKE :name OR category_id IN (SELECT id FROM categories WHERE name LIKE :name ) ORDER BY " + columnName + " " + order;
+        var sql = "SELECT * FROM products WHERE name LIKE '%" + keys.get(0) + "%'";
+        for (var i=1; i<keys.size(); i++){
+            sql += " AND name LIKE '%" + keys.get(i) + "%'";
+        }
+        System.out.println(sql);
+        var resultList = jdbcTemplate.query(sql,
                 new DataClassRowMapper<>(ProductRecord.class));
         return resultList.isEmpty() ? null : resultList;
     }

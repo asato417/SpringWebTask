@@ -15,6 +15,17 @@
     </div>
     <p>[[ ${successMsg} ]]</p>
     <form method="get" action="menu" class="search-form">
+      <div class="order">
+        <select name="order" class="base-text">
+          <option value="product_id,ASC">並び替え</option>
+          <option value="product_id,ASC">商品ID：昇順</option>
+          <option value="product_id,DESC">商品ID：降順</option>
+          <option value="category_id,ASC">カテゴリ：昇順</option>
+          <option value="category_id,DESC">カテゴリ：降順</option>
+          <option value="price,ASC">単価：安い順</option>
+          <option value="price,DESC">単価：高い順</option>
+        </select>
+      </div>
       <div class="search-container">
         <input type="text" name="keyword" size="25" placeholder="キーワード検索">
         <input type="submit" value="&#xf002">
