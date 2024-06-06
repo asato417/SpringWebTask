@@ -1,4 +1,5 @@
 package com.example.springwebtask.controller;
+
 import com.example.springwebtask.entity.ProductRecord;
 import com.example.springwebtask.entity.SessionUser;
 import com.example.springwebtask.form.DetailForm;
@@ -10,16 +11,23 @@ import com.example.springwebtask.service.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Base64;
 
 @Controller
 public class SystemController {
@@ -105,11 +113,15 @@ public class SystemController {
         // 重複する商品IDがあるか調べる
         var recordNum = productService.findByProductId(insertForm.getProductId());
         if(recordNum == null) {
+            MultipartFile file = insertForm.getFile();
+            System.out.println(file);
             var insertProduct = new ProductRecord(-1, insertForm.getProductId(),
                     Integer.valueOf(insertForm.getCategory()),
-                    insertForm.getName(), insertForm.getPrice(), null,
+                    insertForm.getName(), insertForm.getPrice(), file.getOriginalFilename(),
                     insertForm.getDescription(), null, null);
             productService.insert(insertProduct);
+            // 画像保存
+            insertImgFile(file);
             return "redirect:insertSuccess";
         } else {
             model.addAttribute("errorMsg", "商品IDが重複しています");
@@ -131,6 +143,16 @@ public class SystemController {
         form.setCategory(categoryService.findById(product.categoryId()).name());
         form.setDescription(product.description());
         model.addAttribute("id", product.id());
+        model.addAttribute("imgName", product.imagePath());
+
+        File img = new File("./src/main/resources/static/img/"+product.imagePath());
+        try{
+            byte[] byteImg = Files.readAllBytes(img.toPath());
+            String base64Data = Base64.getEncoder().encodeToString(byteImg);
+            model.addAttribute("base64Data", "data:img/png;base64,"+base64Data);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
         return "detail";
     }
     @PostMapping("/detail/{id}")
@@ -173,16 +195,34 @@ public class SystemController {
         var record = productService.findById(id);
         var compRecord = productService.findByProductId(updForm.getProductId());
         if(compRecord == null || record.productId().equals(updForm.getProductId())) {
+            MultipartFile file = updForm.getFile();
             var updateProduct = new ProductRecord(record.id(), updForm.getProductId(),
                     categoryService.findByName(updForm.getCategory()).id(),
-                    updForm.getName(), updForm.getPrice(), null,
+                    updForm.getName(), updForm.getPrice(), file.getOriginalFilename(),
                     updForm.getDescription(), null, null);
             productService.update(updateProduct);
+            insertImgFile(file);
             redirectAttributes.addFlashAttribute("successMsg", "更新に成功しました");
             return "redirect:../menu";
         } else {
             model.addAttribute("errorMsg", "商品IDが重複しています");
             return "/updateInput";
+        }
+    }
+
+    public void insertImgFile(MultipartFile file){
+        final String UPLOAD_DIR = "./src/main/resources/static/img"; // アップロード先のディレクトリ
+
+        try {
+            if(!file.getOriginalFilename().equals("")) {
+                // 画像ファイルの保存先パス
+                String filePath = UPLOAD_DIR + File.separator + file.getOriginalFilename();
+                // ファイルをディスクに保存
+                Path destination = new File(filePath).toPath();
+                Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

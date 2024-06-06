@@ -12,7 +12,7 @@
     <div class="form-body">
       <p class="error">[[ ${errorMsg} ]]</p>
 
-      <form th:action="@{/updateInput/{id}(id=${id})}" method="post" th:object="${form}">
+      <form th:action="@{/updateInput/{id}(id=${id})}" method="post" th:object="${form}" enctype="multipart/form-data">
         <fieldset class="label-130">
           <div>
             <label>商品ID</label>
@@ -49,7 +49,7 @@
           </div>
           <div>
             <label>画像</label>
-            <input type="file" name="file">
+            <input type="file" th:field="*{file}" accept="image/*">
             <span class="error" th:each="error: ${#fields.errors('file')}">
               [[ ${error} ]]
             </span>

@@ -87,8 +87,9 @@ public class ProductRepository implements IProductRepository{
         param.addValue("name", product.name());
         param.addValue("price", product.price());
         param.addValue("description", product.description());
+        param.addValue("imgPath", product.imagePath());
         final String INSERT =
-                "INSERT INTO products (product_id, category_id, name, price, description) VALUES(:pId, :cId, :name, :price, :description)";
+                "INSERT INTO products (product_id, category_id, name, price, description, image_path) VALUES(:pId, :cId, :name, :price, :description, :imgPath)";
         return jdbcTemplate.update(INSERT, param);
     }
 
@@ -102,17 +103,22 @@ public class ProductRepository implements IProductRepository{
 
     @Override
     public int update(ProductRecord product) {
+        String update = "";
         var param = new MapSqlParameterSource();
         param.addValue("productId", product.productId());
         param.addValue("name", product.name());
         param.addValue("price", product.price());
         param.addValue("categoryId", product.categoryId());
         param.addValue("description", product.description());
-        param.addValue("file", product.imagePath());
         param.addValue("id", product.id());
-        final String UPDATE =
-                "UPDATE products SET product_id = :productId, name=:name, price=:price, category_id=:categoryId, description=:description, image_path=:file WHERE id = :id";
-        return jdbcTemplate.update(UPDATE, param);
+        if(!product.imagePath().equals("")){
+            param.addValue("file", product.imagePath());
+            update = "UPDATE products SET product_id = :productId, name=:name, price=:price, category_id=:categoryId, description=:description, image_path=:file WHERE id = :id";
+        } else {
+            update = "UPDATE products SET product_id = :productId, name=:name, price=:price, category_id=:categoryId, description=:description WHERE id = :id";
+
+        }
+        return jdbcTemplate.update(update, param);
 
     }
 

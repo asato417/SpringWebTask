@@ -11,7 +11,7 @@
   <div class="update">
     <div class="form-body">
       <div class="img_block">
-        <img src="images/マッキー.png" class="product-img"><br>
+        <img th:src="${base64Data}" class="product-img"><br>
       </div>
       <form th:action="@{/detail/{id}(id=${id})}" method="post" th:object="${form}">
         <fieldset class="label-130 product_block">
