@@ -69,7 +69,7 @@ public class SystemController {
                        @ModelAttribute("successMsg") String successMsg, Model model){
         if(request.getSession(false)==null) return "redirect:/index";
         var recordNum = 0;
-        if(key.equals("all")) {
+        if(key.equals("all") || key.replaceAll(" |　", "").equals("")) {
             var productAll = productService.findAllSort(order.split(",")[0], order.split(",")[1]);
             var categoryAll = categoryService.findAll();
             model.addAttribute("products", productAll);
@@ -145,13 +145,16 @@ public class SystemController {
         model.addAttribute("id", product.id());
         model.addAttribute("imgName", product.imagePath());
 
-        File img = new File("./src/main/resources/static/img/"+product.imagePath());
-        try{
-            byte[] byteImg = Files.readAllBytes(img.toPath());
-            String base64Data = Base64.getEncoder().encodeToString(byteImg);
-            model.addAttribute("base64Data", "data:img/png;base64,"+base64Data);
-        } catch (IOException e){
-            e.printStackTrace();
+        // データベースにファイルパスがない場合、画像を表示しない
+        if(product.imagePath()!=null && !product.imagePath().equals("")) {
+            File img = new File("./src/main/resources/static/img/" + product.imagePath());
+            try {
+                byte[] byteImg = Files.readAllBytes(img.toPath());
+                String base64Data = Base64.getEncoder().encodeToString(byteImg);
+                model.addAttribute("base64Data", "data:img/png;base64," + base64Data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return "detail";
     }
